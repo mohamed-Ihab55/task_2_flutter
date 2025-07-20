@@ -12,6 +12,7 @@ SqlDb sqlDb = SqlDb();
 GlobalKey<FormState> formstate = GlobalKey();
 TextEditingController title = TextEditingController();
 TextEditingController type = TextEditingController();
+TextEditingController category = TextEditingController();
 
 class _AddWatchListState extends State<AddWatchList> {
   @override
@@ -68,10 +69,29 @@ class _AddWatchListState extends State<AddWatchList> {
                     ),
                   ),
                   SizedBox(height: 18),
+                  TextFormField(
+                    controller: category,
+                    decoration: InputDecoration(
+                      hintText: 'Category',
+                      hintStyle: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        color: Color(0xffADAEBC),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Color(0xffD1D5DB)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.cyan),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 18),
                   GestureDetector(
                     onTap: () async {
                       int response = await sqlDb.insertData(
-                        '''INSERT INTO WatchList (`title` , `type`) VALUES ("${title.text}" , "${type.text}")''',
+                        '''INSERT INTO WatchList (`title` , `type` , `category`) VALUES ("${title.text}" , "${type.text}" , "${category.text}")''',
                       );
                       if (response > 0) {
                         Navigator.of(context).pushReplacementNamed("home");

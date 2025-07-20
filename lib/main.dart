@@ -25,7 +25,7 @@ class WatchList extends StatelessWidget {
         "home": (context) => WatchListView(),
         "update": (context) => UpgradeWatchList(),
       },
-      home: WatchListView(),
+      initialRoute: "home",
       theme: Provider.of<ThemeProvider>(context).themeData,
       debugShowCheckedModeBanner: false,
     );

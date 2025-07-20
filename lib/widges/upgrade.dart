@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:task_2/sql/sqldb.dart';
 
 class UpgradeWatchList extends StatefulWidget {
-  const UpgradeWatchList({super.key, this.title, this.id, this.type});
+  const UpgradeWatchList({
+    super.key,
+    this.title,
+    this.id,
+    this.type,
+    this.category,
+  });
   final title;
   final id;
   final type;
+  final category;
   @override
   State<UpgradeWatchList> createState() => _UpgradeWatchListState();
 }
@@ -16,10 +23,12 @@ class _UpgradeWatchListState extends State<UpgradeWatchList> {
   GlobalKey<FormState> formstate = GlobalKey();
   TextEditingController title = TextEditingController();
   TextEditingController type = TextEditingController();
+  TextEditingController category = TextEditingController();
   @override
   void initState() {
     title.text = widget.title;
     type.text = widget.type;
+    category.text = widget.category;
     super.initState();
   }
 
@@ -77,11 +86,30 @@ class _UpgradeWatchListState extends State<UpgradeWatchList> {
                     ),
                   ),
                   SizedBox(height: 18),
+                  TextFormField(
+                    controller: category,
+                    decoration: InputDecoration(
+                      hintText: 'Category',
+                      hintStyle: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        color: Color(0xffADAEBC),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Color(0xffD1D5DB)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.cyan),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 18),
                   GestureDetector(
                     onTap: () async {
                       int response = await sqlDb.updateData(
                         '''UPDATE WatchList SET title="${title.text}",
-                        type="${type.text}" WHERE id = ${widget.id}''',
+                        type="${type.text}", category="${category.text}" WHERE id = ${widget.id}''',
                       );
                       if (response > 0) {
                         Navigator.of(context).pushReplacementNamed("home");

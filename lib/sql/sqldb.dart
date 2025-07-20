@@ -18,7 +18,7 @@ class SqlDb {
     Database mydb = await openDatabase(
       path,
       onCreate: _onCreate,
-      version: 2,
+      version: 6,
       onUpgrade: _onUpgrade,
     );
     return mydb;
@@ -33,7 +33,8 @@ class SqlDb {
   CREATE TABLE "WatchList" (
   id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   title TEXT NOT NULL,
-  type TEXT
+  type TEXT,
+  category TEXT
   )
 ''');
     print('Create DataBase');

@@ -67,7 +67,7 @@ class _WatchListViewState extends State<WatchListView> {
                       ),
                     ),
                     subtitle: Text(
-                      "${watchList[i]['type']}",
+                      "${watchList[i]['type']} / ${watchList[i]['category']}",
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                       ),
@@ -83,6 +83,7 @@ class _WatchListViewState extends State<WatchListView> {
                                   title: watchList[i]['title'],
                                   type: watchList[i]['type'],
                                   id: watchList[i]['id'],
+                                  category: watchList[i]['category'],
                                 ),
                               ),
                             );
@@ -116,9 +117,6 @@ class _WatchListViewState extends State<WatchListView> {
                 );
               },
             ),
-            // ElevatedButton(onPressed: (){
-            //   changeTheme();
-            // }, child: Text('Light theme'))
           ],
         ),
       ),
@@ -133,5 +131,3 @@ class _WatchListViewState extends State<WatchListView> {
     );
   }
 }
-
-
