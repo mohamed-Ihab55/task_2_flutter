@@ -11,9 +11,20 @@ class WatchListView extends StatefulWidget {
 
 class _WatchListViewState extends State<WatchListView> {
   SqlDb sqlDb = SqlDb();
-  Future<List<Map>> readData() async {
+  List watchList = [];
+  bool isLoading = true;
+  Future readData() async {
     List<Map> response = await sqlDb.readData("SELECT * FROM WatchList");
-    return response;
+    watchList.addAll(response);
+    isLoading=false;
+    if (this.mounted) {
+      setState(() {});
+    }
+  }
+
+  void initState() {
+    readData();
+    super.initState();
   }
 
   @override
@@ -22,56 +33,44 @@ class _WatchListViewState extends State<WatchListView> {
       appBar: AppBar(title: Text('My Watch List'), centerTitle: true),
       body: ListView(
         children: [
-          FutureBuilder(
-            future: readData(),
-            builder: (BuildContext context, AsyncSnapshot<List<Map>> snapshot) {
-              if (snapshot.hasData) {
-                return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (context, i) {
-                    return Card(
-                      child: ListTile(
-                        title: Text("${snapshot.data![i]['title']}"),
-                        subtitle: Text("${snapshot.data![i]['type']}"),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              onPressed: () async {
-                                int response = await sqlDb.updateData(
-                                  "DELETE FROM WatchList WHERE id=${snapshot.data![i]['id']}",
-                                );
-                                if (response > 0) {
-                                  Navigator.of(
-                                    context,
-                                  ).pushReplacementNamed("home");
-                                }
-                              },
-                              icon: Icon(Icons.edit),
-                            ),
-                            IconButton(
-                              onPressed: () async {
-                                int response = await sqlDb.deleteData(
-                                  "DELETE FROM WatchList WHERE id=${snapshot.data![i]['id']}",
-                                );
-                                if (response > 0) {
-                                  Navigator.of(
-                                    context,
-                                  ).pushReplacementNamed("home");
-                                }
-                              },
-                              icon: Icon(Icons.delete),
-                            ),
-                          ],
-                        ),
+          ListView.builder(
+            itemCount: snapshot.data!.length,
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemBuilder: (context, i) {
+              return Card(
+                child: ListTile(
+                  title: Text("${snapshot.data![i]['title']}"),
+                  subtitle: Text("${snapshot.data![i]['type']}"),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () async {
+                          int response = await sqlDb.updateData(
+                            "DELETE FROM WatchList WHERE id=${snapshot.data![i]['id']}",
+                          );
+                          if (response > 0) {
+                            Navigator.of(context).pushReplacementNamed("home");
+                          }
+                        },
+                        icon: Icon(Icons.edit),
                       ),
-                    );
-                  },
-                );
-              }
-              return Center(child: CircularProgressIndicator());
+                      IconButton(
+                        onPressed: () async {
+                          int response = await sqlDb.deleteData(
+                            "DELETE FROM WatchList WHERE id=${snapshot.data![i]['id']}",
+                          );
+                          if (response > 0) {
+                            Navigator.of(context).pushReplacementNamed("home");
+                          }
+                        },
+                        icon: Icon(Icons.delete),
+                      ),
+                    ],
+                  ),
+                ),
+              );
             },
           ),
           // ElevatedButton(onPressed: (){
