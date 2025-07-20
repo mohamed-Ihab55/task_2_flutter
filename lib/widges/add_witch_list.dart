@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:task_2/widges/constans.dart';
 import 'package:task_2/sql/sqldb.dart';
 
 class AddWatchList extends StatefulWidget {
@@ -19,7 +17,11 @@ class _AddWatchListState extends State<AddWatchList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Insert New Movie"), centerTitle: true),
+      appBar: AppBar(
+        title: Text("Insert New Movie"),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: ListView(
@@ -42,7 +44,7 @@ class _AddWatchListState extends State<AddWatchList> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: kMainColor),
+                        borderSide: BorderSide(color: Colors.cyan),
                       ),
                     ),
                   ),
@@ -61,7 +63,7 @@ class _AddWatchListState extends State<AddWatchList> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: kMainColor),
+                        borderSide: BorderSide(color: Colors.cyan),
                       ),
                     ),
                   ),
@@ -79,7 +81,7 @@ class _AddWatchListState extends State<AddWatchList> {
                     child: Container(
                       width: double.infinity,
                       height: 50,
-                      color: Colors.cyan,
+                      color: Theme.of(context).colorScheme.primary,
                       child: Center(
                         child: Text(
                           "Add The Movie",

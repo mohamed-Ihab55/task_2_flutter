@@ -1,6 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:task_2/sql/sqldb.dart';
+import 'package:task_2/themes/theme_provider.dart';
+import 'package:task_2/widges/upgrade.dart';
 
 class WatchListView extends StatefulWidget {
   const WatchListView({super.key});
@@ -16,12 +18,13 @@ class _WatchListViewState extends State<WatchListView> {
   Future readData() async {
     List<Map> response = await sqlDb.readData("SELECT * FROM WatchList");
     watchList.addAll(response);
-    isLoading=false;
-    if (this.mounted) {
+    isLoading = false;
+    if (mounted) {
       setState(() {});
     }
   }
 
+  @override
   void initState() {
     readData();
     super.initState();
@@ -30,85 +33,105 @@ class _WatchListViewState extends State<WatchListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('My Watch List'), centerTitle: true),
-      body: ListView(
-        children: [
-          ListView.builder(
-            itemCount: snapshot.data!.length,
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemBuilder: (context, i) {
-              return Card(
-                child: ListTile(
-                  title: Text("${snapshot.data![i]['title']}"),
-                  subtitle: Text("${snapshot.data![i]['type']}"),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        onPressed: () async {
-                          int response = await sqlDb.updateData(
-                            "DELETE FROM WatchList WHERE id=${snapshot.data![i]['id']}",
-                          );
-                          if (response > 0) {
-                            Navigator.of(context).pushReplacementNamed("home");
-                          }
-                        },
-                        icon: Icon(Icons.edit),
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: AppBar(
+        title: Text(
+          'My Watch List',
+          style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+        ),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        leading: IconButton(
+          onPressed: () {
+            Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+          },
+          icon: Icon(Icons.dark_mode),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
+        child: ListView(
+          children: [
+            ListView.builder(
+              itemCount: watchList.length,
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (context, i) {
+                return Card(
+                  color: Theme.of(context).colorScheme.secondary,
+                  child: ListTile(
+                    title: Text(
+                      "${watchList[i]['title']}",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
                       ),
-                      IconButton(
-                        onPressed: () async {
-                          int response = await sqlDb.deleteData(
-                            "DELETE FROM WatchList WHERE id=${snapshot.data![i]['id']}",
-                          );
-                          if (response > 0) {
-                            Navigator.of(context).pushReplacementNamed("home");
-                          }
-                        },
-                        icon: Icon(Icons.delete),
+                    ),
+                    subtitle: Text(
+                      "${watchList[i]['type']}",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
                       ),
-                    ],
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          onPressed: () async {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => UpgradeWatchList(
+                                  title: watchList[i]['title'],
+                                  type: watchList[i]['type'],
+                                  id: watchList[i]['id'],
+                                ),
+                              ),
+                            );
+                          },
+                          icon: Icon(
+                            Icons.edit,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () async {
+                            int response = await sqlDb.deleteData(
+                              "DELETE FROM WatchList WHERE id=${watchList[i]['id']}",
+                            );
+                            if (response > 0) {
+                              watchList.removeWhere(
+                                (element) =>
+                                    element['id'] == watchList[i]['id'],
+                              );
+                              setState(() {});
+                            }
+                          },
+                          icon: Icon(
+                            Icons.delete,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
-          // ElevatedButton(onPressed: (){
-          //   changeTheme();
-          // }, child: Text('Light theme'))
-        ],
+                );
+              },
+            ),
+            // ElevatedButton(onPressed: (){
+            //   changeTheme();
+            // }, child: Text('Light theme'))
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blue,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         onPressed: () async {
           Navigator.of(context).pushNamed("Insert");
         },
         tooltip: 'Insert',
-        child: const Icon(Icons.add),
+        child: Icon(Icons.add, color: Theme.of(context).colorScheme.tertiary),
       ),
     );
   }
 }
 
-// class ChangeTheme extends StatefulWidget {
-//   const ChangeTheme({super.key});
 
-//   @override
-//   State<ChangeTheme> createState() => _ChangeThemeState();
-// }
-
-// class _ChangeThemeState extends State<ChangeTheme> {
-//  ThemeMode _themeMode = ThemeMode.system;
-//   void changeTheme(ThemeMode themeMode) {
-//     setState(() {
-//       _themeMode = themeMode;
-//     });
-//   }
-  
-//   @override
-//   Widget build(BuildContext context) {
-//     // TODO: implement build
-//     throw UnimplementedError();
-//   }
-  
-// }

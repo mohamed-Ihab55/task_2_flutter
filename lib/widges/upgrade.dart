@@ -1,25 +1,36 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:task_2/widges/constans.dart';
 import 'package:task_2/sql/sqldb.dart';
 
 class UpgradeWatchList extends StatefulWidget {
-  const UpgradeWatchList({super.key});
-
+  const UpgradeWatchList({super.key, this.title, this.id, this.type});
+  final title;
+  final id;
+  final type;
   @override
   State<UpgradeWatchList> createState() => _UpgradeWatchListState();
 }
 
-SqlDb sqlDb = SqlDb();
-GlobalKey<FormState> formstate = GlobalKey();
-TextEditingController title = TextEditingController();
-TextEditingController type = TextEditingController();
-
+@override
 class _UpgradeWatchListState extends State<UpgradeWatchList> {
+  SqlDb sqlDb = SqlDb();
+  GlobalKey<FormState> formstate = GlobalKey();
+  TextEditingController title = TextEditingController();
+  TextEditingController type = TextEditingController();
+  @override
+  void initState() {
+    title.text = widget.title;
+    type.text = widget.type;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Edit The Movie"), centerTitle: true),
+      appBar: AppBar(
+        title: Text("Edit The Movie"),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: ListView(
@@ -42,7 +53,7 @@ class _UpgradeWatchListState extends State<UpgradeWatchList> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: kMainColor),
+                        borderSide: BorderSide(color: Colors.cyan),
                       ),
                     ),
                   ),
@@ -61,7 +72,7 @@ class _UpgradeWatchListState extends State<UpgradeWatchList> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: kMainColor),
+                        borderSide: BorderSide(color: Colors.cyan),
                       ),
                     ),
                   ),
@@ -69,7 +80,8 @@ class _UpgradeWatchListState extends State<UpgradeWatchList> {
                   GestureDetector(
                     onTap: () async {
                       int response = await sqlDb.updateData(
-                        '''UPDATE WatchList SET (`title` , `type`) VALUES ("${title.text}" , "${type.text}")''',
+                        '''UPDATE WatchList SET title="${title.text}",
+                        type="${type.text}" WHERE id = ${widget.id}''',
                       );
                       if (response > 0) {
                         Navigator.of(context).pushReplacementNamed("home");
@@ -79,7 +91,7 @@ class _UpgradeWatchListState extends State<UpgradeWatchList> {
                     child: Container(
                       width: double.infinity,
                       height: 50,
-                      color: Colors.cyan,
+                      color: Theme.of(context).colorScheme.primary,
                       child: Center(
                         child: Text(
                           "Update The Movie",

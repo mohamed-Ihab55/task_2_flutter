@@ -1,11 +1,17 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:task_2/View/home.dart';
+import 'package:task_2/themes/theme_provider.dart';
 import 'package:task_2/widges/add_witch_list.dart';
 import 'package:task_2/widges/upgrade.dart';
 
 void main() {
-  runApp(WatchList());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ThemeProvider(),
+      child: WatchList(),
+    ),
+  );
 }
 
 class WatchList extends StatelessWidget {
@@ -20,11 +26,8 @@ class WatchList extends StatelessWidget {
         "update": (context) => UpgradeWatchList(),
       },
       home: WatchListView(),
-      theme: ThemeData(primarySwatch: Colors.grey),
-      darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.system,
+      theme: Provider.of<ThemeProvider>(context).themeData,
       debugShowCheckedModeBanner: false,
     );
   }
 }
-
